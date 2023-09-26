@@ -251,9 +251,9 @@ include('config.php');
 		          <div class="col-md-12 nav-link-wrap mb-5">
 		            <div class="nav ftco-animate nav-pills justify-content-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 
-		              <a class="nav-link active" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Drinks</a>
+		              <a class="nav-link active" id="v-pills-2-tab" data-toggle="pill" href="menu.php" role="tab" name="drinks" aria-controls="v-pills-2" aria-selected="false">Drinks</a>
 
-		              <a class="nav-link" id="v-pills-3-tab" data-toggle="pill" href="#v-pills-3" role="tab" aria-controls="v-pills-3" aria-selected="false">Desserts</a>
+		              <a class="nav-link" id="v-pills-3-tab" data-toggle="pill" href="menu.php" role="tab" name="desserts" aria-controls="v-pills-3" aria-selected="false">Desserts</a>
 		            </div>
 		          </div>
 		          <div class="col-md-12 d-flex align-items-center">
@@ -266,7 +266,17 @@ include('config.php');
 		              <div class="tab-pane fade show active" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-2-tab">
 		                <div class="row">
 						<?php
-					$productsfetch = "SELECT * from products";
+						
+						$limit = 3;
+						if(isset($_GET['pg'])){
+
+							$get_pg = $_GET['pg'];
+						}else{
+							$get_pg = 1;
+						}
+						$strt_point = ($get_pg - 1) * $limit;
+
+					$productsfetch = "SELECT * from products as p inner join `parent_cat` as pc on pc.id = p.category limit {$strt_point}, {$limit}";
 					$runquery = mysqli_query($connection, $productsfetch);
 					if(mysqli_num_rows($runquery) > 0){
 						while($row = mysqli_fetch_assoc($runquery)){
@@ -279,8 +289,8 @@ include('config.php');
 		              				<div class="text">
 		              					<h3><a href="#"><?php echo $row['title'] ?></a></h3>
 		              					<p><?php echo $row['description'] ?></p>
-		              					<p class="price"><span><?php echo $row['price'] ?></span></p>
-		              					<p><a href="#" class="btn btn-primary btn-outline-primary">Add to cart</a></p>
+		              					<p class="price"><span><?php echo $row['price'] ?></span></p> 
+		              					<p><a href="product-single.php" class="btn btn-primary btn-outline-primary">Add to cart</a></p>
 		              				</div>
 		              			</div>
 		              		</div>
@@ -299,13 +309,33 @@ include('config.php');
 					</div>
 				</div>
 				<div class="col-md-4 text-center m-auto">
-				<ul class="pagination">
-					<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="#">Previous</a></li>
-					<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="#">1</a></li>
-					<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="#">2</a></li>
-					<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="#">3</a></li>
-					<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="#">Next</a></li>
-				</ul>
+
+				<?php
+				$pagination = "SELECT * from products as p inner join `parent_cat` as pc on pc.id = p.category";
+				$connec_query = mysqli_query($connection, $pagination);
+				if(mysqli_num_rows($connec_query) > 0){
+					 $totalrecords = mysqli_num_rows($connec_query);
+					 
+					 $totalpages = ceil($totalrecords / $limit);
+					 echo '<ul class="pagination">';
+					 if($get_pg > 1){
+
+						 echo '<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="menu.php?pg='.($get_pg-1).'">Prev</a></li>';
+						}
+						for($i = 1; $i <= $totalpages; $i++){
+						 $active = $i == $get_pg? "active" : "";
+						 echo '<li class="'.$active.'page-item"><a class="page-link btn btn-primary btn-outline-primary" href="menu.php?pg='.$i.'">'.$i.'</a></li>';
+						}
+						if($get_pg < $totalpages){
+
+							echo '<li class="page-item"><a class="page-link btn btn-primary btn-outline-primary" href="menu.php?pg='.($get_pg+1).'">Next</a></li>';
+						}
+					echo '</ul>';
+					 
+				}
+				?>
+
+					
 				</div>
 		    </div>
     	</div>

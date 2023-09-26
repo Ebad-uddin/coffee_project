@@ -52,9 +52,9 @@ session_start();
             <li class="nav-item cart"><a href="cart.php" class="nav-link"><span class="icon icon-shopping_cart"></span></a>
             <?php 
             if(!isset($_SESSION['useremail'])){
+            ?>
 
             
-            ?>
 			  <li class="nav-item"><a href="login.php" class="nav-link">Login</a></li>
 			  <li class="nav-item"><a href="register.php" class="nav-link">Register</a></li>
 
