@@ -1,15 +1,21 @@
+
 <?php
-session_start();
+include("config.php");
+if(isset($_SESSION['userid'])){
+  $userid = $_SESSION['userid'];
+}else{
+  $userid = '';
+}
+$total =mysqli_query($connection, "SELECT userid, count(cartid) as totalitem  from cart where userid = '$userid'");
+if(mysqli_num_rows($total) > 0){
+  $cart_items = mysqli_fetch_array($total);
 
 
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Coffee - Free Bootstrap 4 Template by Colorlib</title>
+    <title>Coffee Website</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
@@ -35,6 +41,7 @@ session_start();
     <link rel="stylesheet" href="css/flaticon.css">
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/style.css">
+    
   </head>
   <body>
   	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
@@ -49,10 +56,24 @@ session_start();
 	          <li class="nav-item"><a href="menu.php" class="nav-link">Menu</a></li>
 	          <li class="nav-item"><a href="about.php" class="nav-link">About</a></li>
 	          <li class="nav-item"><a href="contact.php" class="nav-link">Contact</a></li>
-            <li class="nav-item cart"><a href="cart.php" class="nav-link"><span class="icon icon-shopping_cart"></span></a>
-            <?php 
-            if(!isset($_SESSION['useremail'])){
+            <li class="nav-item cart"><a href="cart.php" class="nav-link"><span class="icon icon-shopping_cart"></span>
+            <?php
+            if(isset($_SESSION['userid'])){
+              if($_SESSION['userid'] == $cart_items['userid']){
+
+              
             ?>
+            <sup class="badge bg-success" style="padding-top:5px"><?php echo $cart_items['totalitem'] ?></sup></a>
+            <?php 
+            }
+          }else{
+            ?>
+           <sup class="badge bg-success" style="padding-top:5px"></sup></a>
+           <?php
+          }}
+          if(!isset($_SESSION['useremail'])){
+          ?>
+              
 
             
 			  <li class="nav-item"><a href="login.php" class="nav-link">Login</a></li>
@@ -64,7 +85,7 @@ session_start();
           </ul>
 			  <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <?php echo $_SESSION['useremail']?>
+          <?php echo $_SESSION['username']?>
         </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="userprofile.php">Profile</a></li>

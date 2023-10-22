@@ -1,10 +1,10 @@
 <?php
-include('header.php');
-include('config.php');
-// session_start();
 if(isset($_SESSION['useremail'])){
   header("location: index.php");
 }
+include('header.php');
+include('config.php');
+// session_start();
 if(isset($_POST['register'])){
   $user_name = mysqli_real_escape_string($connection, $_POST['username']);
   $user_email = mysqli_real_escape_string($connection, $_POST['email']);
@@ -19,6 +19,7 @@ if(isset($_POST['register'])){
   }else{
     $insert_data = "INSERT INTO `admin_signup` (`username`, `email`, `password`) VALUES ('$user_name', '$user_email', '$pass')";
     $connect = mysqli_query($connection, $insert_data);
+    header('location: login.php');
   }
 }
 
@@ -31,37 +32,7 @@ if(isset($_POST['register'])){
 
 
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Coffee - Free Bootstrap 4 Template by Colorlib</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="css/animate.css">
-    
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-
-    <link rel="stylesheet" href="css/aos.css">
-
-    <link rel="stylesheet" href="css/ionicons.min.css">
-
-    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="css/jquery.timepicker.css">
-
-    
-    <link rel="stylesheet" href="css/flaticon.css">
-    <link rel="stylesheet" href="css/icomoon.css">
-    <link rel="stylesheet" href="css/style.css">
-  </head>
-  <body>
   <?php
 	include('header.php');
 	?>

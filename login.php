@@ -1,10 +1,10 @@
 <?php
-include('header.php');
-include('config.php');
-// session_start();
+  session_start();
 if(isset($_SESSION['useremail'])){
   header("location: index.php");
 }
+include('header.php');
+include('config.php');
 
 if(isset($_POST['login'])){
   $login_email = $_POST['log_email'];
@@ -20,6 +20,8 @@ if(isset($_POST['login'])){
     $pass_check = password_verify($login_pass,$db_pass);
     if($pass_check){
       session_start();
+      $_SESSION["userid"] = $row['id'];
+      $_SESSION["username"] = $row['username'];
       $_SESSION["useremail"] = $row['email'];
       header('location:index.php');
     }else{

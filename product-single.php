@@ -1,3 +1,8 @@
+<?php
+session_start();
+include("config.php");
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -50,53 +55,72 @@
         </div>
       </div>
     </section>
-
+<?php
+if(isset($_GET['id'])){
+  $pro_id = $_GET['id'];
+}else{
+  $pro_id = 1;
+}
+$productsfetch = "SELECT * from products as p inner join `parent_cat` as pc on pc.cid = p.category where p.id = {$pro_id}";
+$runquery = mysqli_query($connection, $productsfetch);
+if(mysqli_num_rows($runquery) > 0){
+  while($row = mysqli_fetch_assoc($runquery)){
+    
+?>
     <section class="ftco-section">
     	<div class="container">
+        <div id="msg">
+
+        </div>
     		<div class="row">
     			<div class="col-lg-6 mb-5 ftco-animate">
-    				<a href="images/menu-2.jpg" class="image-popup"><img src="images/menu-2.jpg" class="img-fluid" alt="Colorlib Template"></a>
+            <input type="hidden" id="userid" value="<?php echo $_SESSION['userid']?>">
+            <input type="hidden" id="proid" value="<?php echo $row['id']?>">
+    				<a href="<?php echo 'images/' . $row['image']?>" class="image-popup"><img src="<?php echo 'images/' . $row['image']?>" class="img-fluid" alt="<?php echo $row['image']?>"></a>
     			</div>
     			<div class="col-lg-6 product-details pl-md-5 ftco-animate">
-    				<h3>Creamy Latte Coffee</h3>
-    				<p class="price"><span>$4.90</span></p>
-    				<p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
-    				<p>On her way she met a copy. The copy warned the Little Blind Text, that where it came from it would have been rewritten a thousand times and everything that was left from its origin would be the word "and" and the Little Blind Text should turn around and return to its own, safe country. But nothing the copy said could convince her and so it didn’t take long until a few insidious Copy Writers ambushed her, made her drunk with Longe and Parole and dragged her into their agency, where they abused her for their.
-						</p>
+    				<h3><?php echo $row['title']?></h3>
+    				<p class="price"><span><?php echo $row['price']?></span></p>
+    				<p><?php echo $row['description']?></p>
+    				
 						<div class="row mt-4">
 							<div class="col-md-6">
 								<div class="form-group d-flex">
 		              <div class="select-wrap">
 	                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-	                  <select name="" id="" class="form-control">
-	                  	<option value="">Small</option>
-	                    <option value="">Medium</option>
-	                    <option value="">Large</option>
-	                    <option value="">Extra Large</option>
+	                  <select name="" id="size" class="form-control">
+	                  	<option value="Small">Small</option>
+	                    <option value="Medium">Medium</option>
+	                    <option value="Large">Large</option>
+	                    <option value="Extra Large">Extra Large</option>
 	                  </select>
 	                </div>
 		            </div>
 							</div>
 							<div class="w-100"></div>
 							<div class="input-group col-md-6 d-flex mb-3">
-	             	<span class="input-group-btn mr-2">
-	                	<button type="button" class="quantity-left-minus btn"  data-type="minus" data-field="">
-	                   <i class="icon-minus"></i>
-	                	</button>
-	            		</span>
-	             	<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
-	             	<span class="input-group-btn ml-2">
-	                	<button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
-	                     <i class="icon-plus"></i>
-	                 </button>
-	             	</span>
+	             
+                <?php
+                 echo '<select class="form-control input-number" name="qty" id="qty">';
+
+                for($i = 0; $i<=10; $i++){
+                  echo '<option class="form-control input-number value="'.$i.'">'.$i.'</option>';
+
+                }
+                ?>
+                  
+                </select>
 	          	</div>
           	</div>
-          	<p><a href="cart.php" class="btn btn-primary py-3 px-5">Add to Cart</a></p>
+          	<p><a  id="cartbtn" class="btn btn-primary py-3 px-5">Add to Cart</a></p>
     			</div>
     		</div>
     	</div>
     </section>
+    <?php
+  }}  
+    
+    ?>
 
     <section class="ftco-section">
     	<div class="container">
@@ -155,6 +179,39 @@
         </div>
     	</div>
     </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Use event delegation to capture the click event on the "Add to Cart" button
+    $('#cartbtn').click(function () {
+      // Get the selected values of "quantity" and "size"
+      var qty = $('#qty option:selected').val();
+      var size = $('#size option:selected').val();
+      var msg = $('#msg');
+
+      // Now, you can use these values in your AJAX request
+      var userid = $('#userid').val();
+      var proid = $('#proid').val();
+
+      $.ajax({
+        url: 'addtocart.php', // Replace with your actual cart endpoint
+        method: 'POST',
+        data: {
+          userid: userid,
+          proid: proid,
+          qty: qty,
+          size: size,
+        },
+        success: function (response) {
+          msg.html(response);
+        },
+      });
+    });
+  });
+</script>
+
+
 
     <footer class="ftco-footer ftco-section img">
     	<div class="overlay"></div>
@@ -258,40 +315,40 @@
   <script src="js/main.js"></script>
 
   <script>
-		$(document).ready(function(){
+		// $(document).ready(function(){
 
-		var quantitiy=0;
-		   $('.quantity-right-plus').click(function(e){
+		// var quantitiy=0;
+		//    $('.quantity-right-plus').click(function(e){
 		        
-		        // Stop acting like a button
-		        e.preventDefault();
-		        // Get the field name
-		        var quantity = parseInt($('#quantity').val());
+		//         // Stop acting like a button
+		//         e.preventDefault();
+		//         // Get the field name
+		//         var quantity = parseInt($('#quantity').val());
 		        
-		        // If is not undefined
+		//         // If is not undefined
 		            
-		            $('#quantity').val(quantity + 1);
+		//             $('#quantity').val(quantity + 1);
 
 		          
-		            // Increment
+		//             // Increment
 		        
-		    });
+		//     });
 
-		     $('.quantity-left-minus').click(function(e){
-		        // Stop acting like a button
-		        e.preventDefault();
-		        // Get the field name
-		        var quantity = parseInt($('#quantity').val());
+		//      $('.quantity-left-minus').click(function(e){
+		//         // Stop acting like a button
+		//         e.preventDefault();
+		//         // Get the field name
+		//         var quantity = parseInt($('#quantity').val());
 		        
-		        // If is not undefined
+		//         // If is not undefined
 		      
-		            // Increment
-		            if(quantity>0){
-		            $('#quantity').val(quantity - 1);
-		            }
-		    });
+		//             // Increment
+		//             if(quantity>0){
+		//             $('#quantity').val(quantity - 1);
+		//             }
+		//     });
 		    
-		});
+		// });
 	</script>
 
     

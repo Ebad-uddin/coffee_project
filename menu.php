@@ -1,40 +1,9 @@
 <?php 
 include('config.php');
+include('header.php');
+
 ?>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Coffee - Free Bootstrap 4 Template by Colorlib</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="css/animate.css">
-    
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-
-    <link rel="stylesheet" href="css/aos.css">
-
-    <link rel="stylesheet" href="css/ionicons.min.css">
-
-    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="css/jquery.timepicker.css">
-
-    
-    <link rel="stylesheet" href="css/flaticon.css">
-    <link rel="stylesheet" href="css/icomoon.css">
-    <link rel="stylesheet" href="css/style.css">
-  </head>
-  <body>
-  <?php
-	include('header.php');
-	?>
     <!-- END nav -->
 
     <section class="home-slider owl-carousel">
@@ -276,7 +245,7 @@ include('config.php');
 						}
 						$strt_point = ($get_pg - 1) * $limit;
 
-					$productsfetch = "SELECT * from products as p inner join `parent_cat` as pc on pc.id = p.category limit {$strt_point}, {$limit}";
+					$productsfetch = "SELECT * from products as p inner join `parent_cat` as pc on pc.cid = p.category limit {$strt_point}, {$limit}";
 					$runquery = mysqli_query($connection, $productsfetch);
 					if(mysqli_num_rows($runquery) > 0){
 						while($row = mysqli_fetch_assoc($runquery)){
@@ -290,7 +259,7 @@ include('config.php');
 		              					<h3><a href="#"><?php echo $row['title'] ?></a></h3>
 		              					<p><?php echo $row['description'] ?></p>
 		              					<p class="price"><span><?php echo $row['price'] ?></span></p> 
-		              					<p><a href="product-single.php" class="btn btn-primary btn-outline-primary">Add to cart</a></p>
+		              					<p><a href="product-single.php?id=<?php echo $row['id']?>" class="btn btn-primary btn-outline-primary">Add to cart</a></p>
 		              				</div>
 		              			</div>
 		              		</div>
@@ -311,7 +280,7 @@ include('config.php');
 				<div class="col-md-4 text-center m-auto">
 
 				<?php
-				$pagination = "SELECT * from products as p inner join `parent_cat` as pc on pc.id = p.category";
+				$pagination = "SELECT * from products as p inner join `parent_cat` as pc on pc.cid = p.category";
 				$connec_query = mysqli_query($connection, $pagination);
 				if(mysqli_num_rows($connec_query) > 0){
 					 $totalrecords = mysqli_num_rows($connec_query);

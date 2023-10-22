@@ -1,37 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Coffee - Free Bootstrap 4 Template by Colorlib</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
+<?php
+session_start();
+if(!isset($_SESSION['useremail'])){
+	header("location: login.php");
+}
 
-    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
-    <link rel="stylesheet" href="css/animate.css">
-    
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
+include('header.php');
+include('config.php');
+$current_user_id = $_SESSION['userid'];
+$cart_data = "SELECT * from cart AS c INNER JOIN `admin_signup` AS user ON c.userid = user.id INNER JOIN products AS P ON p.id = c.proid WHERE c.userid = '$current_user_id'";
+$result = mysqli_query($connection, $cart_data);
+if(mysqli_num_rows($result) > 0){
 
-    <link rel="stylesheet" href="css/aos.css">
 
-    <link rel="stylesheet" href="css/ionicons.min.css">
 
-    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="css/jquery.timepicker.css">
 
-    
-    <link rel="stylesheet" href="css/flaticon.css">
-    <link rel="stylesheet" href="css/icomoon.css">
-    <link rel="stylesheet" href="css/style.css">
-  </head>
-  <body>
-  <?php 
-  include('header.php');
-  ?>
+
+
+?>
+
+
     <!-- END nav -->
 
     <section class="home-slider owl-carousel">
@@ -68,47 +55,46 @@
 						      </tr>
 						    </thead>
 						    <tbody>
+								<?php
+									while($row = mysqli_fetch_assoc($result)){
+
+								?>
 						      <tr class="text-center">
 						        <td class="product-remove"><a href="#"><span class="icon-close"></span></a></td>
 						        
-						        <td class="image-prod"><div class="img" style="background-image:url(images/menu-2.jpg);"></div></td>
+						        <td class="image-prod"><div class="img" style="background-image:url(<?php
+								echo 'images/' . $row['image']?>);"></div></td>
 						        
 						        <td class="product-name">
-						        	<h3>Creamy Latte Coffee</h3>
-						        	<p>Far far away, behind the word mountains, far from the countries</p>
+						        	<h3><?php
+								echo $row['title']?></h3>
+						        	<p><?php
+								echo $row['description']?></p>
 						        </td>
 						        
-						        <td class="price">$4.90</td>
+						        <td class="price"><?php
+								echo $row['price']?></td>
 						        
 						        <td>
-									<div class="input-group mb-3">
-										<input disabled type="text" name="quantity" class="quantity form-control input-number" value="1" min="1" max="100">
-									 </div>
+								<?php
+								echo '<select class="form-control input-number" name="qty" id="qty">';
+
+								for($i = 0; $i<=10; $i++){
+								echo '<option class="form-control input-number value="'.$i.'">'.$i.'</option>';
+
+								}
+								?>
 					            </td>
 						        
 						        <td class="total">$4.90</td>
 						      </tr><!-- END TR-->
+							  <?php
+							 	}
+							}
+							 
+							  ?>
 
-						      <tr class="text-center">
-						        <td class="product-remove"><a href="#"><span class="icon-close"></span></a></td>
-						        
-						        <td class="image-prod"><div class="img" style="background-image:url(images/dish-2.jpg);"></div></td>
-						        
-						        <td class="product-name">
-						        	<h3>Grilled Ribs Beef</h3>
-						        	<p>Far far away, behind the word mountains, far from the countries</p>
-						        </td>
-						        
-						        <td class="price">$15.70</td>
-						        
-						        <td class="quantity">
-						        	<div class="input-group mb-3">
-					             	<input disabled type="text" name="quantity" class="quantity form-control input-number" value="1" min="1" max="100">
-					          	</div>
-					          </td>
-						        
-						        <td class="total">$15.70</td>
-						      </tr><!-- END TR-->
+						     
 						    </tbody>
 						  </table>
 					  </div>
