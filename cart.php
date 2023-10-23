@@ -60,8 +60,8 @@ if(mysqli_num_rows($result) > 0){
 
 								?>
 						      <tr class="text-center">
-						        <td class="product-remove"><a href="#"><span class="icon-close"></span></a></td>
-						        
+						        <td class="product-remove"><a id="closebtn"><span class="icon-close"></span></a></td>
+						        <input type="hidden" id="cartid" value="<?php echo$row['cartid'] ?>">
 						        <td class="image-prod"><div class="img" style="background-image:url(<?php
 								echo 'images/' . $row['image']?>);"></div></td>
 						        
@@ -93,6 +93,31 @@ if(mysqli_num_rows($result) > 0){
 							}
 							 
 							  ?>
+							  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+							  <script>
+								$(document).ready(function(){
+								let closebtn = $('#closebtn');
+								let cartid = $('#cartid').val();
+								closebtn.click(function(){
+									$.ajax({
+										url : 'deletecart.php',
+										type : 'POST',
+										data : {cartid : cartid},
+										success :function(data){
+											if(data == 1){
+												alert('data deleted');
+												
+											}else{
+												alert('not deleted');
+												
+											}
+										}
+									})
+								})
+
+								})
+							  </script>
 
 						     
 						    </tbody>
